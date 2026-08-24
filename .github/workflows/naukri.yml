@@ -1,0 +1,51 @@
+name: naukri-refresh
+
+# Times are UTC. 04:00 UTC = 09:30 IST, 16:00 UTC = 21:30 IST.
+# GitHub delays scheduled runs under load and disables schedules entirely
+# after 60 days without repo activity, so treat this as best-effort.
+on:
+  schedule:
+    - cron: "0 4 * * *"
+    - cron: "0 16 * * *"
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      # state.json only. cookies.pkl is a live session token and does not
+      # belong in a workflow cache, so each run logs in fresh. The toggle is
+      # designed to work without any state at all — see README.
+      - uses: actions/cache@v4
+        with:
+          path: state.json
+          key: naukri-state-${{ github.run_id }}
+          restore-keys: naukri-state-
+
+      - name: Toggle headline
+        env:
+          NAUKRI_EMAIL: ${{ secrets.NAUKRI_EMAIL }}
+          NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
+          HEADLESS: "1"
+        run: python main.py
+
+      # Screenshots of a failed run, to tell a selector break apart from a
+      # bot challenge. Artifacts may contain a logged-in page — keep the repo
+      # private, and note these expire on their own.
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: failure-artifacts
+          path: artifacts/
+          retention-days: 3

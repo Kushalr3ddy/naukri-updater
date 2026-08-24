@@ -1,0 +1,11 @@
+venv/
+.git/
+.env
+*.pkl
+state.json
+logs/
+artifacts/
+__pycache__/
+*.py[cod]
+systemd/
+README.md

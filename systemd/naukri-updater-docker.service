@@ -1,0 +1,10 @@
+[Unit]
+Description=Naukri headline refresh (containerised)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/everything/naukri-updater
+ExecStart=/usr/bin/docker compose run --rm naukri-updater
+TimeoutStartSec=600

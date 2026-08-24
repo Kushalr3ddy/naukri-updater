@@ -1,0 +1,20 @@
+services:
+  naukri-updater:
+    build: .
+    image: naukri-updater
+    env_file: .env
+    environment:
+      DATA_DIR: /data
+      # Without this the container logs in UTC, which makes correlating a
+      # failed run against a schedule needlessly annoying.
+      TZ: Asia/Kolkata
+    volumes:
+      # Keeps cookies.pkl and state.json across runs. Without this every run
+      # does a fresh password login, which is a noisier pattern.
+      - naukri-data:/data
+    # One-shot by design: the container runs the toggle and exits. Schedule it
+    # from outside (systemd timer, host cron, or your provider's scheduler).
+    restart: "no"
+
+volumes:
+  naukri-data:

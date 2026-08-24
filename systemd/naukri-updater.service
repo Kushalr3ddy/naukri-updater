@@ -1,0 +1,11 @@
+[Unit]
+Description=Toggle the Naukri resume headline to keep the profile fresh
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/everything/naukri-updater
+ExecStart=%h/everything/naukri-updater/venv/bin/python main.py
+# Chrome is slow to start under contention; do not let it hang the timer.
+TimeoutStartSec=300
