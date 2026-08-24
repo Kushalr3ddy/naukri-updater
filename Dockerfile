@@ -28,15 +28,15 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY main.py .
-COPY naukri/ ./naukri/
+COPY naukri.py .
+
 
 # Run unprivileged. /data holds cookies.pkl and state.json across runs.
 RUN useradd --create-home --uid 1000 runner \
-    && mkdir -p /data /app/logs /app/artifacts \
+    && mkdir -p /data \
     && chown -R runner:runner /data /app
 USER runner
 
 VOLUME ["/data"]
 
-ENTRYPOINT ["python", "main.py"]
+ENTRYPOINT ["python", "naukri.py"]
