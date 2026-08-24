@@ -31,4 +31,5 @@ jobs:
 
     # 4. Execute your Python file
     - name: Run script
+      timeout-minutes: 5
       run: python naukri.py # Replace main.py with your file name
