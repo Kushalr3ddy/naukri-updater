@@ -20,6 +20,8 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.11' # Change to your preferred version
+        NAUKRI_EMAIL: ${{ env.NAUKRI_EMAIL }}
+        NAUKRI_PASSWORD: ${{ env.NAUKRI_PASSWORD }}
 
     # 3. Optional: Install dependencies if you have a requirements.txt file
     - name: Install dependencies
