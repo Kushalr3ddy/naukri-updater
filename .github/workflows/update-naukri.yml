@@ -1,36 +1,33 @@
 name: run naukri updater
 
-# Defines when the script will run (on every push, manual trigger, or a schedule)
 on:
   schedule:
-    - cron: "5 9,16 * * 1,2,3,4,5" # Runs at 9:05 AM and 4:05 PM from Monday to Friday
-  workflow_dispatch: # Allows you to run this workflow manually from the Actions tab
+    - cron: "35 3,10 * * 1,2,3,4,5"
+  workflow_dispatch:
 
 jobs:
   run-script:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Clone the repository into the runner environment
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    # 2. Set up the specific Python version
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11' # Change to your preferred version
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-    # 3. Optional: Install dependencies if you have a requirements.txt file
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
 
-    # 4. Execute your Python file
-    - name: Run script
-      timeout-minutes: 5
-      with:
-        NAUKRI_EMAIL: ${{ env.NAUKRI_EMAIL }}
-        NAUKRI_PASSWORD: ${{ env.NAUKRI_PASSWORD }}
-      run: python naukri.py # Replace main.py with your file name
+      - name: Run script
+        timeout-minutes: 5
+        env:
+          NAUKRI_EMAIL: ${{ secrets.NAUKRI_EMAIL }}
+          NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
+        run: python naukri.py
